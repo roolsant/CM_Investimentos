@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Consórcios - CM Investimentos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --verde-primario: #033b20;
+            --verde-claro: #97a141;
+            --dourado: #c5a059;
+            --branco: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background: #000;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* === HERO COM BACKGROUNDS ANIMADOS === */
+        .hero-section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero-backgrounds {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+
+        .hero-bg.active {
+            opacity: 0.3;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(3, 59, 32, 0.85) 0%, rgba(0, 0, 0, 0.95) 100%);
+            z-index: 2;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            max-width: 1400px;
+            width: 100%;
+            padding: 40px 20px;
+        }
+
+        /* === HEADER === */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 60px;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .logo-area img {
+            height: 120px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 6px 15px rgba(197, 160, 89, 0.5));
+        }
+
+        .header-title h1 {
+            color: var(--branco);
+            font-size: 2.2rem;
+            font-weight: 800;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+            letter-spacing: 1px;
+        }
+
+        .header-title p {
+            color: var(--dourado);
+            font-size: 1.1rem;
+            margin-top: 8px;
+            font-weight: 500;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .header-contact {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--branco);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 12px 20px;
+            border-radius: 50px;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .contact-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.25);
+            border-color: var(--dourado);
+            box-shadow: 0 8px 20px rgba(197, 160, 89, 0.3);
+        }
+
+        .contact-item i {
+            font-size: 1.3rem;
+        }
+
+        /* === TÍTULO PRINCIPAL === */
+        .main-title {
+            margin-bottom: 50px;
+        }
+
+        .main-title h2 {
+            color: var(--branco);
+            font-size: 2.8rem;
+            font-weight: 800;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.6);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .main-title p {
+            color: #ddd;
+            font-size: 1.3rem;
+            font-weight: 500;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* === CARROSSEL DE PRODUTOS === */
+        .carousel-container {
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .carousel-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .product-card {
+            min-width: 100%;
+            background: var(--branco);
+            text-align: center;
+            padding-bottom: 35px;
+        }
+
+        .product-image-area {
+            height: 350px;
+            background: linear-gradient(135deg, #f8f8f8 0%, #ffffff 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 30px;
+            position: relative;
+        }
+
+        .product-image-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, var(--verde-primario) 0%, var(--verde-claro) 100%);
+        }
+
+        .product-image-area img {
+            max-width: 90%;
+            max-height: 90%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 25px rgba(0,0,0,0.15));
+            transition: transform 0.4s ease;
+        }
+
+        .product-card:hover .product-image-area img {
+            transform: scale(1.05);
+        }
+
+        .product-info {
+            padding: 30px 25px;
+        }
+
+        .product-title {
+            color: var(--verde-primario);
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .product-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .btn-eu-quero {
+            background: linear-gradient(135deg, var(--verde-primario) 0%, #055a33 100%);
+            color: var(--branco);
+            padding: 18px 50px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 25px rgba(3, 59, 32, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-eu-quero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .btn-eu-quero:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .btn-eu-quero:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 35px rgba(3, 59, 32, 0.5);
+            background: linear-gradient(135deg, #055a33 0%, var(--verde-claro) 100%);
+        }
+
+        /* === SETAS DE NAVEGAÇÃO === */
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--verde-primario);
+            border: none;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            font-size: 1.3rem;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel-nav:hover {
+            background: var(--verde-primario);
+            color: var(--dourado);
+            transform: translateY(-50%) scale(1.15);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .carousel-nav.prev {
+            left: -25px;
+        }
+
+        .carousel-nav.next {
+            right: -25px;
+        }
+
+        /* === INDICADORES === */
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .indicator.active {
+            background: var(--dourado);
+            width: 35px;
+            border-radius: 10px;
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .indicator:hover {
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        /* === MODAL DO FORMULÁRIO === */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: var(--branco);
+            border-radius: 25px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.6);
+            animation: slideUp 0.4s ease;
+        }
+
+        /* Ocultar overflow na tela de sucesso */
+        .modal-content:has(.form-step[data-step="5"].active) {
+            overflow-y: hidden;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--verde-primario) 0%, #055a33 100%);
+            color: var(--branco);
+            padding: 30px;
+            border-radius: 25px 25px 0 0;
+            position: relative;
+        }
+
+        .modal-header h3 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .modal-header p {
+            color: var(--dourado);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .btn-close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: var(--branco);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-close-modal:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px 30px 20px;
+        }
+
+        /* === PROGRESS BAR === */
+        .progress-container {
+            margin-bottom: 35px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--verde-primario) 0%, var(--verde-claro) 100%);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: var(--verde-primario);
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        /* === ETAPAS DO FORMULÁRIO === */
+        .form-step {
+            display: none;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .step-title {
+            color: var(--verde-primario);
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            color: var(--verde-primario);
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f8f8;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--verde-claro);
+            background: var(--branco);
+            box-shadow: 0 0 0 4px rgba(151, 161, 65, 0.1);
+        }
+
+        /* === AUTOCOMPLETE DROPDOWN === */
+        .input-group {
+            position: relative;
+        }
+
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid var(--verde-claro);
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .autocomplete-dropdown.active {
+            display: block;
+        }
+
+        .autocomplete-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 0.95rem;
+            color: #333;
+        }
+
+        .autocomplete-item:hover {
+            background: #f0f7f0;
+            color: var(--verde-primario);
+        }
+
+        .autocomplete-item:last-child {
+            border-radius: 0 0 10px 10px;
+        }
+
+        .autocomplete-no-results {
+            padding: 12px 20px;
+            color: #999;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        /* Scroll customizado para dropdown */
+        .autocomplete-dropdown::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .autocomplete-dropdown::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .autocomplete-dropdown::-webkit-scrollbar-thumb {
+            background: var(--verde-claro);
+            border-radius: 10px;
+        }
+
+        .autocomplete-dropdown::-webkit-scrollbar-thumb:hover {
+            background: var(--verde-primario);
+        }
+
+        /* === BOTÕES === */
+        .form-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 35px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px 30px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--verde-primario) 0%, #055a33 100%);
+            color: var(--branco);
+            box-shadow: 0 6px 20px rgba(3, 59, 32, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(3, 59, 32, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+            transform: translateY(-2px);
+        }
+
+        /* === MENSAGEM DE SUCESSO === */
+        .success-screen {
+            text-align: center;
+            padding: 15px 20px 10px;
+        }
+
+        .success-icon {
+            width: 85px;
+            height: 85px;
+            background: linear-gradient(135deg, var(--verde-primario) 0%, var(--verde-claro) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+            animation: scaleIn 0.6s ease;
+        }
+
+        @keyframes scaleIn {
+            0% { transform: scale(0) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(180deg); }
+            100% { transform: scale(1) rotate(360deg); }
+        }
+
+        .success-icon i {
+            font-size: 2.6rem;
+            color: var(--branco);
+        }
+
+        .success-screen h3 {
+            color: var(--verde-primario);
+            font-size: 1.6rem;
+            margin-bottom: 8px;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .success-screen p {
+            color: #666;
+            font-size: 0.93rem;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .success-screen .btn-primary {
+            margin-top: 10px;
+            padding: 11px 28px;
+            font-size: 0.93rem;
+        }
+
+        /* === WHATSAPP FLUTUANTE === */
+        .float-whatsapp {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #25d366;
+            color: var(--branco);
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5);
+            z-index: 999;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        .float-whatsapp:hover {
+            transform: scale(1.15);
+            box-shadow: 0 10px 35px rgba(37, 211, 102, 0.6);
+        }
+
+        /* === FOOTER === */
+        .footer {
+            background: linear-gradient(135deg, #111 0%, #1a1a1a 100%);
+            color: var(--branco);
+            padding: 50px 5%;
+            border-top: 5px solid var(--dourado);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+
+        .footer-logo img {
+            height: 100px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 35px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.05rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--dourado);
+            transform: translateX(5px);
+        }
+
+        .footer-links i {
+            font-size: 1.2rem;
+        }
+
+        .footer-copyright {
+            width: 100%;
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #888;
+            font-size: 0.95rem;
+        }
+
+        /* === RESPONSIVO === */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header-title h1 {
+                font-size: 1.8rem;
+            }
+
+            .header-contact {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .main-title h2 {
+                font-size: 2rem;
+            }
+
+            .main-title p {
+                font-size: 1.1rem;
+            }
+
+            .carousel-container {
+                max-width: 95%;
+            }
+
+            .product-image-area {
+                height: 280px;
+            }
+
+            .product-title {
+                font-size: 1.6rem;
+            }
+
+            .carousel-nav {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
+            }
+
+            .carousel-nav.prev {
+                left: -15px;
+            }
+
+            .carousel-nav.next {
+                right: -15px;
+            }
+
+            .modal-content {
+                max-width: 95%;
+                margin: 20px;
+            }
+
+            .modal-body {
+                padding: 30px 20px;
+            }
+
+            .form-buttons {
+                flex-direction: column;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HERO SECTION -->
+    <div class="hero-section">
+        <!-- Backgrounds Animados -->
+        <div class="hero-backgrounds">
+            <div class="hero-bg active" style="background-image: url('assets/imagens/carro.png');"></div>
+            <div class="hero-bg" style="background-image: url('assets/imagens/casa.png');"></div>
+            <div class="hero-bg" style="background-image: url('assets/imagens/caminhao.png');"></div>
+            <div class="hero-bg" style="background-image: url('assets/imagens/moto.png');"></div>
+            <div class="hero-bg" style="background-image: url('assets/imagens/jetski.png');"></div>
+        </div>
+        
+        <!-- Overlay -->
+        <div class="hero-overlay"></div>
+
+        <!-- Conteúdo -->
+        <div class="hero-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="logo-area">
+                    <img src="assets/imagens/logo_transparente.png" alt="CM Investimentos">
+                </div>
+                
+                <div class="header-contact">
+                    <a href="tel:+5563999927116" class="contact-item">
+                        <i class="fas fa-phone-alt"></i>
+                        <span>(63) 99992-7116</span>
+                    </a>
+                    <a href="https://www.instagram.com/cm_investimentoss/" target="_blank" class="contact-item">
+                        <i class="fab fa-instagram"></i>
+                        <span>@cm_investimentoss</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Título Principal -->
+            <div class="main-title">
+                <h2>Escolha o que deseja conquistar</h2>
+                <p>Deslize e encontre o bem ideal para você</p>
+            </div>
+
+            <!-- Carrossel de Produtos -->
+            <div class="carousel-container">
+                <button class="carousel-nav prev" onclick="changeSlide(-1)">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="carousel-nav next" onclick="changeSlide(1)">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+
+                <div class="carousel-wrapper">
+                    <div class="carousel-track" id="carouselTrack">
+                        
+                        <!-- Card Apartamento -->
+                        <div class="product-card">
+                            <div class="product-image-area">
+                                <img src="assets/imagens/apartamento.png" alt="Apartamento">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">Apartamento</h3>
+                                <p class="product-subtitle">Seu lar na cidade</p>
+                                <button class="btn-eu-quero" onclick="openModal('Apartamento')">EU QUERO</button>
+                            </div>
+                        </div>
+
+                        <!-- Card Casa -->
+                        <div class="product-card">
+                            <div class="product-image-area">
+                                <img src="assets/imagens/casa.png" alt="Casa">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">Casa</h3>
+                                <p class="product-subtitle">O sonho da casa própria</p>
+                                <button class="btn-eu-quero" onclick="openModal('Casa')">EU QUERO</button>
+                            </div>
+                        </div>
+
+                        <!-- Card Chácara -->
+                        <div class="product-card">
+                            <div class="product-image-area">
+                                <img src="assets/imagens/chacara.jpeg" alt="Chácara">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">Chácara</h3>
+                                <p class="product-subtitle">Sossego e natureza</p>
+                                <button class="btn-eu-quero" onclick="openModal('Chácara')">EU QUERO</button>
+                            </div>
+                        </div>
+
+                        <!-- Card Terreno -->
+                        <div class="product-card">
+                            <div class="product-image-area">
+                                <img src="assets/imagens/terreno.jpg" alt="Terreno">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">Terreno</h3>
+                                <p class="product-subtitle">Construa seu futuro</p>
+                                <button class="btn-eu-quero" onclick="openModal('Terreno')">EU QUERO</button>
+                            </div>
+                        </div>
+
+                        <!-- Card Construção -->
+                        <div class="product-card">
+                            <div class="product-image-area">
+                                <img src="assets/imagens/construcao.jpg" alt="Construção">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">Construção</h3>
+                                <p class="product-subtitle">Materiais e mão de obra</p>
+                                <button class="btn-eu-quero" onclick="openModal('Construção')">EU QUERO</button>
+                            </div>
+                        </div>
+
+                        <!-- Card Carro -->
+                        <div class="product-card">
+                            <div class="product-image-area">
+                                <img src="assets/imagens/carro.png" alt="Automóvel">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">Automóvel</h3>
+                                <p class="product-subtitle">Carros novos e seminovos</p>
+                                <button class="btn-eu-quero" onclick="openModal('Automóvel')">EU QUERO</button>
+                            </div>
+                        </div>
+
+                        <!-- Card Moto -->
+                        <div class="product-card">
+                            <div class="product-image-area">
+                                <img src="assets/imagens/moto.png" alt="Moto">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">Moto</h3>
+                                <p class="product-subtitle">Liberdade sobre rodas</p>
+                                <button class="btn-eu-quero" onclick="openModal('Moto')">EU QUERO</button>
+                            </div>
+                        </div>
+
+                        <!-- Card Caminhão -->
+                        <div class="product-card">
+                            <div class="product-image-area">
+                                <img src="assets/imagens/caminhao.png" alt="Caminhão">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">Caminhão</h3>
+                                <p class="product-subtitle">Pesados e frota</p>
+                                <button class="btn-eu-quero" onclick="openModal('Caminhão')">EU QUERO</button>
+                            </div>
+                        </div>
+
+                        <!-- Card Máquinas -->
+                        <div class="product-card">
+                            <div class="product-image-area">
+                                <img src="assets/imagens/maquinas_agricolas.png" alt="Máquinas Agrícolas">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">Máquinas Agrícolas</h3>
+                                <p class="product-subtitle">Potência para o campo</p>
+                                <button class="btn-eu-quero" onclick="openModal('Máquinas Agrícolas')">EU QUERO</button>
+                            </div>
+                        </div>
+
+                        <!-- Card Jet Ski -->
+                        <div class="product-card">
+                            <div class="product-image-area">
+                                <img src="assets/imagens/jetski.png" alt="Jet Ski">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">Jet Ski</h3>
+                                <p class="product-subtitle">Aventura e lazer</p>
+                                <button class="btn-eu-quero" onclick="openModal('Jet Ski')">EU QUERO</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Indicadores -->
+                <div class="carousel-indicators" id="indicators"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DO FORMULÁRIO -->
+    <div class="modal" id="formModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Complete sua simulação</h3>
+                <p id="selectedProduct">Produto selecionado</p>
+                <button class="btn-close-modal" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Progress Bar -->
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span id="progressText">Etapa 1 de 5</span>
+                    </div>
+                </div>
+
+                <!-- Formulário -->
+                <form id="simulatorForm">
+                    <input type="hidden" id="productType" name="productType">
+
+                    <!-- Etapa 1: Valor -->
+                    <div class="form-step active" data-step="1">
+                        <h4 class="step-title">De quanto você precisa?</h4>
+                        <div class="input-group">
+                            <label for="valorBem">Valor do bem (R$)</label>
+                            <input type="text" id="valorBem" name="valorBem" placeholder="Ex: 150.000" required>
+                        </div>
+                    </div>
+
+                    <!-- Etapa 2: Modalidade -->
+                    <div class="form-step" data-step="2">
+                        <h4 class="step-title">Modalidade de crédito preferida?</h4>
+                        <div class="input-group">
+                            <label for="modalidade">Escolha a modalidade</label>
+                            <select id="modalidade" name="modalidade" required>
+                                <option value="">Selecione</option>
+                                <option value="sem-preferencia">Sem preferência</option>
+                                <option value="consorcio">Consórcio</option>
+                                <option value="financiamento">Financiamento</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Etapa 3: Entrada e Parcela -->
+                    <div class="form-step" data-step="3">
+                        <h4 class="step-title">Valores de entrada e parcela</h4>
+                        <div class="input-group">
+                            <label for="valorEntrada">Valor de entrada (R$)</label>
+                            <input type="text" id="valorEntrada" name="valorEntrada" placeholder="Ex: 30.000" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="valorParcela">Valor da parcela ideal (R$)</label>
+                            <input type="text" id="valorParcela" name="valorParcela" placeholder="Ex: 2.500" required>
+                        </div>
+                    </div>
+
+                    <!-- Etapa 4: Dados Pessoais -->
+                    <div class="form-step" data-step="4">
+                        <h4 class="step-title">Seus dados pessoais</h4>
+                        <div class="input-group">
+                            <label for="nome">Nome completo</label>
+                            <input type="text" id="nome" name="nome" placeholder="Digite seu nome" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="telefone">Telefone/WhatsApp</label>
+                            <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="email">E-mail</label>
+                            <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="estado">Estado</label>
+                            <select id="estado" name="estado" required>
+                                <option value="">Selecione o estado</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="cidade">Cidade</label>
+                            <input type="text" id="cidade" name="cidade" placeholder="Digite para buscar..." required autocomplete="off">
+                            <div id="cidadesDropdown" class="autocomplete-dropdown"></div>
+                        </div>
+                    </div>
+
+                    <!-- Etapa 5: Sucesso -->
+                    <div class="form-step" data-step="5">
+                        <div class="success-screen">
+                            <div class="success-icon">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <h3>Recebemos a sua solicitação</h3>
+                            <p>Entraremos em contato, você receberá o retorno da simulação de crédito.</p>
+                            <p style="font-size: 0.93rem; color: var(--verde-claro); font-weight: 600; margin-top: 6px; margin-bottom: 3px;">
+                                Você está no caminho certo para a realização do seu sonho!
+                            </p>
+                            <button class="btn btn-primary" onclick="closeModal()">
+                                Voltar para página principal
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Botões -->
+                    <div class="form-buttons">
+                        <button type="button" class="btn btn-secondary" id="btnPrev" style="display: none;" onclick="prevStep()">
+                            <i class="fas fa-arrow-left"></i> Anterior
+                        </button>
+                        <button type="button" class="btn btn-primary" id="btnNext" onclick="nextStep()">
+                            Próximo <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- WHATSAPP FLUTUANTE -->
+    <a href="https://wa.me/5563999927116?text=Olá!%20Gostaria%20de%20simular%20um%20consórcio." class="float-whatsapp" target="_blank" title="Fale conosco">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="assets/imagens/logo_transparente.png" alt="CM Investimentos">
+            </div>
+            <div class="footer-links">
+                <a href="tel:+5563999927116">
+                    <i class="fas fa-phone-alt"></i> (63) 99992-7116
+                </a>
+                <a href="https://www.instagram.com/cm_investimentoss/" target="_blank">
+                    <i class="fab fa-instagram"></i> @cm_investimentoss
+                </a>
+                <a href="mailto:contato@contato.com.br">
+                    <i class="fas fa-envelope"></i> contato@contato.com.br
+                </a>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            &copy; 2026 CM Investimentos. Todos os direitos reservados.
+        </div>
+    </footer>
+
+    <script>
+        // === VARIÁVEIS GLOBAIS ===
+        let currentSlide = 0;
+        let currentFormStep = 1;
+        const totalFormSteps = 5;
+        const formData = {};
+
+        const slides = document.querySelectorAll('.product-card');
+        const track = document.getElementById('carouselTrack');
+        const totalSlides = slides.length;
+
+        // === CARROSSEL ===
+        function updateCarousel() {
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            updateIndicators();
+            updateBackground();
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide >= totalSlides) currentSlide = 0;
+            if (currentSlide < 0) currentSlide = totalSlides - 1;
+            updateCarousel();
+        }
+
+        // Auto-play
+        let autoplayInterval = setInterval(() => changeSlide(1), 4000);
+
+        document.querySelector('.carousel-container').addEventListener('mouseenter', () => {
+            clearInterval(autoplayInterval);
+        });
+
+        document.querySelector('.carousel-container').addEventListener('mouseleave', () => {
+            autoplayInterval = setInterval(() => changeSlide(1), 4000);
+        });
+
+        // === INDICADORES ===
+        const indicatorsContainer = document.getElementById('indicators');
+        for (let i = 0; i < totalSlides; i++) {
+            const indicator = document.createElement('div');
+            indicator.className = 'indicator';
+            if (i === 0) indicator.classList.add('active');
+            indicator.addEventListener('click', () => {
+                currentSlide = i;
+                updateCarousel();
+            });
+            indicatorsContainer.appendChild(indicator);
+        }
+
+        function updateIndicators() {
+            document.querySelectorAll('.indicator').forEach((ind, index) => {
+                ind.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        // === BACKGROUNDS ANIMADOS ===
+        const backgrounds = document.querySelectorAll('.hero-bg');
+        let bgIndex = 0;
+
+        function updateBackground() {
+            backgrounds.forEach(bg => bg.classList.remove('active'));
+            backgrounds[bgIndex].classList.add('active');
+            bgIndex = (bgIndex + 1) % backgrounds.length;
+        }
+
+        setInterval(updateBackground, 5000);
+
+        // === MÁSCARAS ===
+        function maskMoney(value) {
+            value = value.replace(/\D/g, '');
+            value = (value / 100).toFixed(2);
+            value = value.replace('.', ',');
+            value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+            return value;
+        }
+
+        function maskPhone(value) {
+            value = value.replace(/\D/g, '');
+            value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+            value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+            return value;
+        }
+
+        document.getElementById('valorBem').addEventListener('input', e => e.target.value = maskMoney(e.target.value));
+        document.getElementById('valorEntrada').addEventListener('input', e => e.target.value = maskMoney(e.target.value));
+        document.getElementById('valorParcela').addEventListener('input', e => e.target.value = maskMoney(e.target.value));
+        document.getElementById('telefone').addEventListener('input', e => e.target.value = maskPhone(e.target.value));
+
+        // === MODAL ===
+        const modal = document.getElementById('formModal');
+
+        function openModal(productName) {
+            document.getElementById('selectedProduct').textContent = productName;
+            document.getElementById('productType').value = productName;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            resetForm();
+        }
+
+        // === FORMULÁRIO ===
+        function updateProgress() {
+            const progress = (currentFormStep / totalFormSteps) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `Etapa ${currentFormStep} de ${totalFormSteps}`;
+        }
+
+        function showFormStep(step) {
+            document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+            document.querySelector(`[data-step="${step}"]`).classList.add('active');
+
+            const btnPrev = document.getElementById('btnPrev');
+            const btnNext = document.getElementById('btnNext');
+            const modalContent = document.querySelector('.modal-content');
+
+            // Ocultar botão "Anterior" na primeira etapa E na etapa final (5)
+            btnPrev.style.display = (step === 1 || step === totalFormSteps) ? 'none' : 'flex';
+            
+            if (step === totalFormSteps) {
+                btnNext.style.display = 'none';
+                // Ocultar overflow na etapa de sucesso
+                modalContent.style.overflowY = 'hidden';
+            } else {
+                btnNext.style.display = 'flex';
+                btnNext.innerHTML = step === totalFormSteps - 1 
+                    ? '<i class="fas fa-check"></i> Finalizar' 
+                    : 'Próximo <i class="fas fa-arrow-right"></i>';
+                // Restaurar overflow nas outras etapas
+                modalContent.style.overflowY = 'auto';
+            }
+
+            updateProgress();
+        }
+
+        function validateStep(step) {
+            const currentStep = document.querySelector(`[data-step="${step}"]`);
+            const inputs = currentStep.querySelectorAll('input[required], select[required]');
+            let isValid = true;
+
+            inputs.forEach(input => {
+                if (!input.value.trim()) {
+                    input.style.borderColor = '#e74c3c';
+                    isValid = false;
+                } else {
+                    input.style.borderColor = '#e0e0e0';
+                    formData[input.name] = input.value;
+                }
+            });
+
+            if (!isValid) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+            }
+
+            return isValid;
+        }
+
+        function nextStep() {
+            if (validateStep(currentFormStep)) {
+                if (currentFormStep < totalFormSteps - 1) {
+                    currentFormStep++;
+                    showFormStep(currentFormStep);
+                } else if (currentFormStep === totalFormSteps - 1) {
+                    submitForm();
+                    currentFormStep++;
+                    showFormStep(currentFormStep);
+                    // Mudar título do modal na etapa final
+                    document.querySelector('.modal-header h3').textContent = 'Simulação Enviada';
+                }
+            }
+        }
+
+        function prevStep() {
+            if (currentFormStep > 1) {
+                currentFormStep--;
+                showFormStep(currentFormStep);
+            }
+        }
+
+        function submitForm() {
+            // Garantir que cidade e estado estejam salvos corretamente
+            const estado = document.getElementById('estado').value;
+            const cidade = document.getElementById('cidade').value;
+            formData.estado = estado;
+            formData.cidadeCompleta = `${cidade} - ${estado}`;
+
+            // Preparar mensagem para log (opcional)
+            let message = '🎯 *Nova Simulação - CM Investimentos*\n\n';
+            message += `*Produto:* ${formData.productType}\n`;
+            message += `*Valor do Bem:* R$ ${formData.valorBem}\n`;
+            message += `*Modalidade:* ${formData.modalidade}\n`;
+            message += `*Entrada:* R$ ${formData.valorEntrada}\n`;
+            message += `*Parcela:* R$ ${formData.valorParcela}\n\n`;
+            message += `*Cliente:*\n`;
+            message += `Nome: ${formData.nome}\n`;
+            message += `Telefone: ${formData.telefone}\n`;
+            message += `E-mail: ${formData.email}\n`;
+            message += `Cidade: ${formData.cidadeCompleta}`;
+
+            // Log dos dados (para debug)
+            console.log('Formulário enviado:', formData);
+            console.log('Mensagem formatada:', message);
+
+            // NÃO abre o WhatsApp - apenas mostra a tela de sucesso
+            // Se precisar integrar com backend, adicione aqui:
+            // fetch('/api/simulacao', { method: 'POST', body: JSON.stringify(formData) })
+        }
+
+        function resetForm() {
+            currentFormStep = 1;
+            showFormStep(1);
+            document.getElementById('simulatorForm').reset();
+            Object.keys(formData).forEach(key => delete formData[key]);
+        }
+
+        // === SISTEMA DE ESTADO E CIDADE ===
+        let cidadesLista = [];
+        const estadoSelect = document.getElementById('estado');
+        const cidadeInput = document.getElementById('cidade');
+        const cidadesDropdown = document.getElementById('cidadesDropdown');
+
+        // Carregar estados brasileiros
+        async function carregarEstados() {
+            try {
+                const response = await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome');
+                const estados = await response.json();
+                
+                estados.forEach(estado => {
+                    const option = document.createElement('option');
+                    option.value = estado.sigla;
+                    option.textContent = `${estado.nome} (${estado.sigla})`;
+                    estadoSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar estados:', error);
+            }
+        }
+
+        // Carregar cidades quando selecionar estado
+        estadoSelect.addEventListener('change', async function() {
+            const uf = this.value;
+            cidadeInput.value = '';
+            cidadesDropdown.innerHTML = '';
+            cidadesDropdown.classList.remove('active');
+            cidadesLista = [];
+
+            if (!uf) return;
+
+            try {
+                const response = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios?orderBy=nome`);
+                cidadesLista = await response.json();
+                cidadeInput.placeholder = `Digite o nome da cidade em ${uf}...`;
+                cidadeInput.disabled = false;
+            } catch (error) {
+                console.error('Erro ao carregar cidades:', error);
+                cidadeInput.placeholder = 'Erro ao carregar cidades';
+            }
+        });
+
+        // Filtrar cidades enquanto digita
+        cidadeInput.addEventListener('input', function() {
+            const termo = this.value.toLowerCase().trim();
+            cidadesDropdown.innerHTML = '';
+
+            if (!termo || cidadesLista.length === 0) {
+                cidadesDropdown.classList.remove('active');
+                return;
+            }
+
+            const cidadesFiltradas = cidadesLista.filter(cidade => 
+                cidade.nome.toLowerCase().includes(termo)
+            );
+
+            if (cidadesFiltradas.length === 0) {
+                cidadesDropdown.innerHTML = '<div class="autocomplete-no-results">Nenhuma cidade encontrada</div>';
+                cidadesDropdown.classList.add('active');
+                return;
+            }
+
+            cidadesFiltradas.slice(0, 10).forEach(cidade => {
+                const item = document.createElement('div');
+                item.className = 'autocomplete-item';
+                item.textContent = cidade.nome;
+                item.addEventListener('click', function() {
+                    cidadeInput.value = cidade.nome;
+                    formData.cidade = `${cidade.nome} - ${estadoSelect.value}`;
+                    cidadesDropdown.classList.remove('active');
+                });
+                cidadesDropdown.appendChild(item);
+            });
+
+            cidadesDropdown.classList.add('active');
+        });
+
+        // Fechar dropdown ao clicar fora
+        document.addEventListener('click', function(e) {
+            if (!cidadeInput.contains(e.target) && !cidadesDropdown.contains(e.target)) {
+                cidadesDropdown.classList.remove('active');
+            }
+        });
+
+        // Desabilitar campo cidade até selecionar estado
+        cidadeInput.disabled = true;
+        cidadeInput.placeholder = 'Primeiro selecione o estado';
+
+        // === INICIALIZAR ===
+        carregarEstados();
+        updateCarousel();
+        updateProgress();
+    </script>
+</body>
+</html>
